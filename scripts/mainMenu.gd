@@ -4,10 +4,10 @@ var currentLevel
 var isPaused = false
 
 
-func startLevel(levelNodeIn):
-	currentLevel = levelNodeIn
-	add_child(currentLevel)
+func startLevel(levelToStart):
+	currentLevel = load("res://level"+str(levelToStart)+".tscn")
 	set_visible(false)
+	add_child(currentLevel)
 
 
 

@@ -6,9 +6,13 @@ var levelDimensions
 var levelGrid = {}
 var doors = {}
 var monsters = {}
+var chests = {}
+var initPlayerCoords = Vector2(1,1)
 
 
 func _init(id):
+	set_pause_mode(1)
+	##########
 	var levelName = "res://map"+str(id)+"TileMap.tscn"
 	levelTileMap = load(levelName).instance()
 	var x
@@ -27,6 +31,10 @@ func _init(id):
 	### NEW X AND Y FROM HERE ###
 	for y in range(levelDimensions[1]):
 		for x in range(levelDimensions[0]):
+			if levelTileMap.get_cell(x,y) == 6:
+				initPlayerCoords == Vector2(x,y)#need player coordinates for spawning sprites in correct locations
+	for y in range(levelDimensions[1]):
+		for x in range(levelDimensions[0]):
 			var cc = Vector2(x,y)
 			match levelTileMap.get_cell(x,y):
 				-1:
@@ -39,23 +47,39 @@ func _init(id):
 					levelGrid[cc] = "finish"
 				3:
 					levelGrid[cc] = "door"
+					doors[cc] = false
 				4:
 					levelGrid[cc] = "chest"
+					spawnChest("doubleCoin",cc)
 				5:
 					levelGrid[cc] = "chest"
 				6: #playerSpawn
-					levelGrid[cc] = "floor"
+					levelGrid[cc] = "player"
 				7: #blueSlimeSpawn
-					levelGrid[cc] = "monster"
+					levelGrid[cc] = "floor"
+					spawnMonster("blueSlime",cc)
 				8: #keySpawn
 					levelGrid[cc] = "key"
+					spawnKey(cc)
 				9: #potSpawn
 					levelGrid[cc] = "pot"
+					spawnPot(cc)
 				10: #batSkeletonSpawn
-					levelGrid[cc] = "monster"
+					levelGrid[cc] = "floor"
+					spawnMonster("batSkeleton",cc)
+	
 
+func spawnMonster(type,coordinates):
+	pass
 
+func spawnKey(coordinates):
+	pass
 
+func spawnPot(coordinates):
+	pass
+
+func spawnChest(type, coordinates):
+	pass
 
 
 
