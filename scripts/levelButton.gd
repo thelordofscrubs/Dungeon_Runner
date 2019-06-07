@@ -4,5 +4,5 @@ var levelId = text.lstrip("Level ")
 
 func _pressed():
 	var mainControlNode = get_parent()
-	var level = load("res://levelNode.gd").instance(levelId)
+	var level = Dungeon.instance(levelId)
 	mainControlNode.startLevel(level)
