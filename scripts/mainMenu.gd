@@ -6,8 +6,8 @@ var isPaused = false
 
 func startLevel(levelToStart):
 	currentLevel = load("res://level"+str(levelToStart)+".tscn")
-	set_visible(false)
-	add_child(currentLevel)
+	#set_visible(false)
+	add_child(currentLevel.instance())
 
 
 
