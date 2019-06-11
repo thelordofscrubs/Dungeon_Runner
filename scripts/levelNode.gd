@@ -5,23 +5,27 @@ var levelTileMap
 var levelDimensions
 var levelGrid = {}
 var doors = {}
-# warning-ignore:unused_class_variable
 var monsters = {}
-# warning-ignore:unused_class_variable
 var chests = {}
+var keys = {}
+var pots = {}
 var initPlayerCoords = Vector2(1,1)
 var graphicsContainerNode
 var spriteContainerNode
 var currentPlayerCoordinates
+var pixelMult = Vector2(32,32)
+var player
 
 func _ready():
-	graphicsContainerNode = get_child(0)
-	spriteContainerNode = graphicsContainerNode.get_child(0)
+	graphicsContainerNode = get_node("graphicsContainer")
+	spriteContainerNode = graphicsContainerNode.get_node("spriteContainer")
 	graphicsContainerNode.add_child(levelTileMap)
+	#get_node("healthBar").set_position()
+	graphicsContainerNode.set_position(OS.get_window_size()/Vector2(2,2)-Vector2(8,8))
 
 func _init(id = 0):
+	name = "level"+str(id)
 	set_pause_mode(1)
-	position = OS.get_window_size()/Vector2(2,2)-Vector2(8,8)
 	##########
 	var levelName = "res://maps/map"+str(id)+"TileMap.tscn"
 	levelTileMap = load(levelName).instance()
@@ -66,7 +70,7 @@ func _init(id = 0):
 				5:
 					levelGrid[cc] = "chest"
 				6: #playerSpawn
-					levelGrid[cc] = "player"
+					levelGrid[cc] = "floor"
 					levelTileMap.set_cellv(cc,0)
 				7: #blueSlimeSpawn
 					levelGrid[cc] = "floor"
@@ -88,7 +92,7 @@ func _init(id = 0):
 					levelTileMap.set_cellv(cc,0)
 	print("initial player coordinates are: "+str(initPlayerCoords[0])+", "+str(initPlayerCoords[1]))
 	levelTileMap.set_position(levelTileMap.get_position()-initPlayerCoords*Vector2(16,16))
-	
+	player = Player.new(initPlayerCoords)
 	
 
 func spawnMonster(type,coordinates,playerCoords,facing):
@@ -102,34 +106,77 @@ func spawnMonster(type,coordinates,playerCoords,facing):
 
 # warning-ignore:unused_argument
 func spawnKey(coordinates):
-	pass
+	keys[coordinates] = true
 
 # warning-ignore:unused_argument
 func spawnPot(coordinates):
-	pass
+	pots[coordinates] = true
 
 func spawnChest(type, coordinates):
-	pass
+	chests[coordinates] = type
 
+func openChest(chestKey):
+	var chest = chests[chestKey]
+	match chest:
+		"doubleCoin":
+			player.changeMoney(2)
+	chests.erase(chestKey)
 
+func attemptMove(directionStr):
+	var direction
+	match directionStr:
+		"up":
+			direction = Vector2(0,-1)
+		"down":
+			direction = Vector2(0,1)
+		"left":
+			direction = Vector2(-1,0)
+		"right":
+			direction = Vector2(1,0)
+	var attTilePos = currentPlayerCoordinates + direction
+	var attTile = levelGrid[attTilePos]
+	match attTile:
+		"floor":
+			move(direction)
+		"chest":
+			move(direction)
+			openChest(attTilePos)
+			levelGrid[attTilePos] = "openChest"
+		"openChest":
+			move(direction)
+		"door":
+			if doors[attTilePos] == true:
+				move(direction)
+			else:
+				if player.keys > 0:
+					player.changeKeys(-1)
+					doors[attTilePos] = true
+					move(direction)
+					levelTileMap.set_cellv(attTilePos, 11)
+		"key":
+			keys.erase(attTilePos)
+			player.changeKeys(1)
+			levelGrid[attTilePos] = "floor"
+			move(direction)
+		"pot":
+			move(direction)
+		"finish":
+			move(direction)
+			attemptEndLevel()
 
+func attemptEndLevel():
+	if monsters.size() == 0:
+		endLevel()
 
+func endLevel():
+	print("End Level")
 
+func move(direction):
+	graphicsContainerNode.set_position(graphicsContainerNode.get_position()-direction*pixelMult)
+	player.move(direction)
+	currentPlayerCoordinates += direction
 
-
-
-func attemptMove(direction):
-	pass
-
-var monsterHitTimer = 0
 func _process(delta):
-	monsterHitTimer += delta
-	if monsterHitTimer > .75:
-		#for monster in monsterArray:
-		#	var dmg = monster.attack(player.getCoordinates())
-		#	if dmg:
-		#		player.takeDamage(dmg)
-		monsterHitTimer = 0
 	if Input.is_action_just_released("left"):
 		attemptMove("left")
 	if Input.is_action_just_released("up"):

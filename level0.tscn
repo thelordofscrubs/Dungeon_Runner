@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scripts/levelNode.gd" type="Script" id=1]
+[ext_resource path="res://otherArt/blackPixel.png" type="Texture" id=2]
+[ext_resource path="res://scripts/sceneBackground.gd" type="Script" id=3]
+[ext_resource path="res://healthBar.tscn" type="PackedScene" id=4]
 
 [node name="level0" type="Node2D"]
 pause_mode = 1
@@ -11,3 +14,12 @@ scale = Vector2( 2, 2 )
 
 [node name="spriteContainer" type="Node2D" parent="graphicsContainer"]
 z_index = 1
+
+[node name="background" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+script = ExtResource( 3 )
+
+[node name="healthBar" parent="." instance=ExtResource( 4 )]
+margin_left = 0.0
+margin_bottom = 27.0
+value = 100.0
