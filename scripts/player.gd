@@ -13,11 +13,14 @@ var sprite
 var facing = "down"
 var keys = 0
 var money = 0
+var healthBar
 
 func _ready():
-	sprite = spriteScene.instance()
-	sprite.set_z_index(2)
-	get_parent().add_child(sprite)
+#	sprite = spriteScene.instance()
+#	sprite.set_z_index(5)
+#	get_parent().add_child(sprite)
+#	print("charSprite should have been generated")
+	healthBar = get_node("../uiContainer/healthBar")
 
 func _init(spawnCoordinates, h = 100, aM = 1):
 	name = "Player"
@@ -25,7 +28,13 @@ func _init(spawnCoordinates, h = 100, aM = 1):
 	health = h
 	atkM = aM
 	totalDamage = atkS * atkM
-	
+
+func genSprite():
+	sprite = spriteScene.instance()
+	sprite.set_z_index(5)
+	sprite.set_scale(Vector2(2,2))
+	get_parent().add_child(sprite)
+	print("charSprite should have been generated")
 
 func changeMoney(a):
 	money += a
@@ -35,6 +44,7 @@ func setAttacking(b):
 
 func takeDamage(d):
 	health -= d
+	healthBar.value = health
 
 func changeKeys(a):
 	keys += a

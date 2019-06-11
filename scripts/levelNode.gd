@@ -14,7 +14,7 @@ var graphicsContainerNode
 var spriteContainerNode
 var currentPlayerCoordinates
 var pixelMult = Vector2(32,32)
-var player
+var playerNode
 
 func _ready():
 	graphicsContainerNode = get_node("graphicsContainer")
@@ -22,6 +22,7 @@ func _ready():
 	graphicsContainerNode.add_child(levelTileMap)
 	#get_node("healthBar").set_position()
 	graphicsContainerNode.set_position(OS.get_window_size()/Vector2(2,2)-Vector2(8,8))
+	playerNode.genSprite()
 
 func _init(id = 0):
 	name = "level"+str(id)
@@ -92,9 +93,11 @@ func _init(id = 0):
 					levelTileMap.set_cellv(cc,0)
 	print("initial player coordinates are: "+str(initPlayerCoords[0])+", "+str(initPlayerCoords[1]))
 	levelTileMap.set_position(levelTileMap.get_position()-initPlayerCoords*Vector2(16,16))
-	player = Player.new(initPlayerCoords)
+	levelTileMap.set_z_index(0)
+	playerNode = Player.new(initPlayerCoords)
+	add_child(playerNode)
 	
-
+ 
 func spawnMonster(type,coordinates,playerCoords,facing):
 	match type:
 		"blueSlime":
@@ -119,7 +122,7 @@ func openChest(chestKey):
 	var chest = chests[chestKey]
 	match chest:
 		"doubleCoin":
-			player.changeMoney(2)
+			playerNode.changeMoney(2)
 	chests.erase(chestKey)
 
 func attemptMove(directionStr):
@@ -148,14 +151,14 @@ func attemptMove(directionStr):
 			if doors[attTilePos] == true:
 				move(direction)
 			else:
-				if player.keys > 0:
-					player.changeKeys(-1)
+				if playerNode.keys > 0:
+					playerNode.changeKeys(-1)
 					doors[attTilePos] = true
 					move(direction)
 					levelTileMap.set_cellv(attTilePos, 11)
 		"key":
 			keys.erase(attTilePos)
-			player.changeKeys(1)
+			playerNode.changeKeys(1)
 			levelGrid[attTilePos] = "floor"
 			move(direction)
 		"pot":
@@ -173,8 +176,10 @@ func endLevel():
 
 func move(direction):
 	graphicsContainerNode.set_position(graphicsContainerNode.get_position()-direction*pixelMult)
-	player.move(direction)
+	playerNode.move(direction)
 	currentPlayerCoordinates += direction
+	for monster in monsters.values():
+		monster.updatePlayerPos(direction)
 
 func _process(delta):
 	if Input.is_action_just_released("left"):

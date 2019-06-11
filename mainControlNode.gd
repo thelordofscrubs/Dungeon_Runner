@@ -9,7 +9,10 @@ var menuScene = preload("menu.tscn")
 
 func _ready():
 	mainMenu = get_node("mainMenu")
-	OS.set_window_maximized(true)
+
+func _init():
+	#OS.set_window_maximized(true)
+	pass
 
 func setLevelActive(b):
 	levelActive = b
@@ -18,8 +21,8 @@ func setIsPaused(b):
 	isPaused = b
 
 func startLevel(levelToStart):
-	currentLevel = load("res://level"+str(levelToStart)+".tscn")
-	currentLevel = currentLevel.instance()
+	currentLevel = load("res://level.tscn")
+	currentLevel = currentLevel.instance(levelToStart)
 	set_visible(false)
 	get_parent().add_child(currentLevel)
 	levelActive = true
