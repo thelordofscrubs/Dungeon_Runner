@@ -16,7 +16,7 @@ var spriteContainerNode
 var currentPlayerCoordinates
 var pixelMult = Vector2(32,32)
 var playerNode
-var levelNode
+#var levelNode
 var isDead = false
 
 func _init(id = 0):
@@ -103,10 +103,13 @@ func _ready():
 func spawnMonster(type,coordinates,playerCoords,facing):
 	match type:
 		"blueSlime":
-			monsters[coordinates] = blueSlime.new(coordinates, facing, playerCoords)
+			monsters[coordinates] = blueSlime.new(coordinates, facing, playerCoords,monsters.size())
 			add_child(monsters[coordinates])
 		"batSkeleton":
 			pass
+
+func killMonster(monsterKey):
+	monsters.erase(monsterKey)
 
 func spawnKey(coordinates):
 	keys[coordinates] = true
@@ -192,6 +195,9 @@ func move(direction):
 	for monster in monsters.values():
 		monster.updatePlayerPos(direction)
 
+func hitMonster(monsterKey,damage):
+	monsters[monsterKey].changeHealth(float((-1)*damage))
+
 func _process(delta):
 	if isDead == false:
 		if Input.is_action_just_released("left"):
@@ -203,7 +209,6 @@ func _process(delta):
 		if Input.is_action_just_released("down"):
 			attemptMove("down")
 		if Input.is_action_just_released("attack"):
-			#player.attack()
-			pass
+			playerNode.attack()
 		if Input.is_action_just_released("use"):
 			pass

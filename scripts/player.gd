@@ -10,14 +10,15 @@ var totalDamage
 var coordinates
 var isAttacking = false
 var sprite
-var facing = "down"
+var facing = Vector2(0,1)
 var keys = 0
 var money = 0
 var healthBar
 var moneyDisplay
 var keyDisplay
 var isDead = false
-var deathAnimationFrame = 0
+#var deathAnimationFrame = 0
+var attackSpeed = 1
 
 func _ready():
 #	sprite = spriteScene.instance()
@@ -94,14 +95,28 @@ func changeKeys(a):
 	keys += a
 	keyDisplay.set_text("Keys:\n"+str(keys))
 
+func attack():
+	if isAttacking == true:
+		return
+	isAttacking = true
+	var attackTimer = Timer.new()
+	attackTimer.set_one_shot(true)
+	attackTimer.connect("timeout",self,"attackTimerTimeOut")
+	add_child(attackTimer)
+	attackTimer.start(attackSpeed)
+	sprite.set_texture(load("res://sprites/attackingSwordSprite.tres"))
+	if get_parent().monsters.has(coordinates):
+		get_parent().hitMonster(coordinates,float(totalDamage)/2)
+		print("dealt "+str(float(totalDamage)/2)+" damage to monster at " +str(coordinates))
+	if get_parent().monsters.has(coordinates+facing):
+		get_parent().hitMonster(coordinates+facing,totalDamage)
+		print("dealt "+str(totalDamage)+" damage to monster at " +str(coordinates))
+
+
+func attackTimerTimeOut():
+	isAttacking = false
+	sprite.set_texture(load("res://sprites/charSprite.png"))
+
 func move(vec):
 	coordinates += vec
-	match vec:
-		Vector2(1,0):
-			facing = "right"
-		Vector2(0,1):
-			facing = "down"
-		Vector2(0,-1):
-			facing = "up"
-		Vector2(-1,0):
-			facing = "left"
+	facing = vec

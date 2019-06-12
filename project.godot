@@ -23,11 +23,17 @@ _global_script_classes=[ {
 "class": "blueSlime",
 "language": "GDScript",
 "path": "res://scripts/blueSlime.gd"
+}, {
+"base": "TextureProgress",
+"class": "monsterHealthBar",
+"language": "GDScript",
+"path": "res://scripts/monsterHealthBar.gd"
 } ]
 _global_script_class_icons={
 "Dungeon": "",
 "Player": "",
-"blueSlime": ""
+"blueSlime": "",
+"monsterHealthBar": ""
 }
 
 [application]

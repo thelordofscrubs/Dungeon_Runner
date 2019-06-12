@@ -52,5 +52,5 @@ func _process(delta):
 				get_tree().set_pause(false)
 				isPaused = false
 				currentLevel.set_visible(true)
-				menuContainer.set_visible(false)
+				menuContainer.get_node("menu").set_visible(false)
 				get_node("menuStuff/menu").queue_free()
