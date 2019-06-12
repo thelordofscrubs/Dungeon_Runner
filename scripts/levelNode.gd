@@ -186,6 +186,9 @@ func move(direction):
 	graphicsContainerNode.set_position(graphicsContainerNode.get_position()-direction*pixelMult)
 	playerNode.move(direction)
 	currentPlayerCoordinates += direction
+	for monsterCoords in monsters.keys():
+		if monsterCoords == currentPlayerCoordinates:
+			playerNode.takeDamage(monsters[monsterCoords].damage)
 	for monster in monsters.values():
 		monster.updatePlayerPos(direction)
 
