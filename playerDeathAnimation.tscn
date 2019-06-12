@@ -1,20 +1,21 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://sprites/1st_frame_character_death.png" type="Texture" id=1]
-[ext_resource path="res://sprites/2nd_frame_character_death.png" type="Texture" id=2]
-[ext_resource path="res://sprites/3rd_frame_character_death.png" type="Texture" id=3]
-[ext_resource path="res://sprites/4th_frame_character_death.png" type="Texture" id=4]
+[ext_resource path="res://sprites/charDeath1.png" type="Texture" id=1]
+[ext_resource path="res://sprites/charDeath2.png" type="Texture" id=2]
+[ext_resource path="res://sprites/charDeath3.png" type="Texture" id=3]
+[ext_resource path="res://sprites/charDeath4.png" type="Texture" id=4]
 
 [sub_resource type="SpriteFrames" id=1]
 animations = [ {
 "frames": [ ExtResource( 1 ), ExtResource( 2 ), ExtResource( 3 ), ExtResource( 4 ) ],
 "loop": false,
-"name": "default",
-"speed": 2.0
+"name": "death",
+"speed": 1.33
 } ]
 
 [node name="AnimatedSprite" type="AnimatedSprite"]
-position = Vector2( 16.8824, 15.3046 )
+scale = Vector2( 2, 2 )
+z_index = 15
+z_as_relative = false
 frames = SubResource( 1 )
-frame = 3
-playing = true
+animation = "death"

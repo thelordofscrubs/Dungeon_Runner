@@ -27,9 +27,38 @@ script = ExtResource( 4 )
 [node name="uiContainer" type="Node2D" parent="."]
 z_index = 10
 
-[node name="healthBar" parent="uiContainer" instance=ExtResource( 5 )]
-margin_left = 387.229
-margin_top = 26.8261
-margin_right = 604.229
-margin_bottom = 53.8261
+[node name="uiBackground1" type="ColorRect" parent="uiContainer"]
+margin_left = 319.521
+margin_top = 10.2438
+margin_right = 686.521
+margin_bottom = 64.2438
+color = Color( 0.211765, 0.211765, 0.211765, 1 )
+
+[node name="moneyDisplay" type="Label" parent="uiContainer/uiBackground1"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = 60.323
+margin_top = 9.0
+margin_right = 107.323
+margin_bottom = 40.0
+text = "Money:
+0"
+align = 1
+valign = 1
+
+[node name="healthBar" parent="uiContainer/uiBackground1" instance=ExtResource( 5 )]
+margin_left = 13.506
+margin_top = 11.5403
+margin_right = 230.506
+margin_bottom = 38.5403
 value = 100.0
+
+[node name="keyDisplay" type="Label" parent="uiContainer/uiBackground1"]
+margin_left = 302.219
+margin_top = 9.0
+margin_right = 347.219
+margin_bottom = 40.0
+text = "Keys:
+0"
+align = 1
+valign = 1

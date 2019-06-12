@@ -1,6 +1,7 @@
 extends Node2D
 class_name Dungeon
 
+var levelID
 var levelTileMap
 var levelDimensions
 var levelGrid = {}
@@ -15,20 +16,18 @@ var spriteContainerNode
 var currentPlayerCoordinates
 var pixelMult = Vector2(32,32)
 var playerNode
+var levelNode
+var isDead = false
+
+func _init(id = 0):
+	levelID = id
+	name = "level"+str(levelID)
+	set_pause_mode(1)
 
 func _ready():
 	graphicsContainerNode = get_node("graphicsContainer")
 	spriteContainerNode = graphicsContainerNode.get_node("spriteContainer")
-	graphicsContainerNode.add_child(levelTileMap)
-	#get_node("healthBar").set_position()
-	graphicsContainerNode.set_position(OS.get_window_size()/Vector2(2,2)-Vector2(8,8))
-	playerNode.genSprite()
-
-func _init(id = 0):
-	name = "level"+str(id)
-	set_pause_mode(1)
-	##########
-	var levelName = "res://maps/map"+str(id)+"TileMap.tscn"
+	var levelName = "res://maps/map"+str(levelID)+"TileMap.tscn"
 	levelTileMap = load(levelName).instance()
 	var x
 	var y
@@ -96,7 +95,10 @@ func _init(id = 0):
 	levelTileMap.set_z_index(0)
 	playerNode = Player.new(initPlayerCoords)
 	add_child(playerNode)
-	
+	playerNode.genSprite()
+	graphicsContainerNode.add_child(levelTileMap)
+	#get_node("healthBar").set_position()
+	graphicsContainerNode.set_position(OS.get_window_size()/Vector2(2,2)-Vector2(8,8))
  
 func spawnMonster(type,coordinates,playerCoords,facing):
 	match type:
@@ -106,12 +108,13 @@ func spawnMonster(type,coordinates,playerCoords,facing):
 		"batSkeleton":
 			pass
 
-
-# warning-ignore:unused_argument
 func spawnKey(coordinates):
 	keys[coordinates] = true
+	var keySprite = load("res://sprites/keySprite.tscn").instance()
+	keySprite.set_position(Vector2(16,16)*(coordinates-currentPlayerCoordinates))
+	keySprite.set_name(str(coordinates))
+	spriteContainerNode.add_child(keySprite)
 
-# warning-ignore:unused_argument
 func spawnPot(coordinates):
 	pots[coordinates] = true
 
@@ -124,6 +127,10 @@ func openChest(chestKey):
 		"doubleCoin":
 			playerNode.changeMoney(2)
 	chests.erase(chestKey)
+	levelTileMap.set_cellv(chestKey,5)
+
+func die():
+	isDead = true
 
 func attemptMove(directionStr):
 	var direction
@@ -161,6 +168,7 @@ func attemptMove(directionStr):
 			playerNode.changeKeys(1)
 			levelGrid[attTilePos] = "floor"
 			move(direction)
+			spriteContainerNode.get_node(str(attTilePos)).queue_free()
 		"pot":
 			move(direction)
 		"finish":
@@ -182,16 +190,17 @@ func move(direction):
 		monster.updatePlayerPos(direction)
 
 func _process(delta):
-	if Input.is_action_just_released("left"):
-		attemptMove("left")
-	if Input.is_action_just_released("up"):
-		attemptMove("up")
-	if Input.is_action_just_released("right"):
-		attemptMove("right")
-	if Input.is_action_just_released("down"):
-		attemptMove("down")
-	if Input.is_action_just_released("attack"):
-		#player.attack()
-		pass
-	if Input.is_action_just_released("use"):
-		pass
+	if isDead == false:
+		if Input.is_action_just_released("left"):
+			attemptMove("left")
+		if Input.is_action_just_released("up"):
+			attemptMove("up")
+		if Input.is_action_just_released("right"):
+			attemptMove("right")
+		if Input.is_action_just_released("down"):
+			attemptMove("down")
+		if Input.is_action_just_released("attack"):
+			#player.attack()
+			pass
+		if Input.is_action_just_released("use"):
+			pass

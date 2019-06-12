@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/4th_frame_character_death.png-1517292aaa53ed6b3e3e28715f1a0168.stex"
+path="res://.import/charDeath3.png-c99f6b05aaac2d4ee531a86aab30bf20.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/4th_frame_character_death.png"
-dest_files=[ "res://.import/4th_frame_character_death.png-1517292aaa53ed6b3e3e28715f1a0168.stex" ]
+source_file="res://sprites/charDeath3.png"
+dest_files=[ "res://.import/charDeath3.png-c99f6b05aaac2d4ee531a86aab30bf20.stex" ]
 
 [params]
 
