@@ -66,7 +66,7 @@ func _ready():
 					doors[cc] = false
 				4:
 					levelGrid[cc] = "chest"
-					spawnChest("doubleCoin",cc)
+					spawnChest("doubleArrow",cc)
 				5:
 					levelGrid[cc] = "chest"
 				6: #playerSpawn
@@ -136,8 +136,11 @@ func openChest(chestKey):
 	match chest:
 		"doubleCoin":
 			playerNode.changeMoney(2)
+		"doubleArrow":
+			playerNode.changeArrows(2)
 	chests.erase(chestKey)
 	levelTileMap.set_cellv(chestKey,5)
+	
 
 func die():
 	isDead = true

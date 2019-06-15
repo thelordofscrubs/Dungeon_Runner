@@ -17,6 +17,8 @@ var money = 0
 var healthBar
 var moneyDisplay
 var keyDisplay
+var arrowDisplay
+var weaponDisplay
 var isDead = false
 #var deathAnimationFrame = 0
 var attackSpeed = 1
@@ -32,6 +34,8 @@ func _ready():
 	healthBar = get_node("../uiContainer/uiBackground1/healthBar")
 	moneyDisplay = get_node("../uiContainer/uiBackground1/moneyDisplay")
 	keyDisplay = get_node("../uiContainer/uiBackground1/keyDisplay")
+	arrowDisplay = get_node("../uiContainer/uiBackground1/arrowDisplay")
+	weaponDisplay = get_node("../uiContainer/uiBackground1/weaponDisplay")
 
 func _init(spawnCoordinates, h = 100, aM = 1):
 	name = "Player"
@@ -134,11 +138,15 @@ func attack():
 			sprite.set_texture(load("res://sprites/attackingBowSprite.png"))
 			if arrows > 0:
 				fireArrow(coordinates,facing)
-				arrows -= 1
+				changeArrows(-1)
 
 func fireArrow(coords, direction):
 	var arrow = Arrow.new(coords, direction, initialCoordinates)
 	get_node("../graphicsContainer").add_child(arrow)
+
+func changeArrows(a):
+	arrows += a
+	arrowDisplay.set_text("Arrows:\n"+str(arrows))
 
 func attackTimerTimeOut():
 	isAttacking = false
@@ -154,6 +162,7 @@ func changeWeapon(d):
 		currentWeapon = weapons.size()-1
 	if currentWeapon == weapons.size():
 		currentWeapon = 0
+	weaponDisplay.set_text("Current Weapon:\n"+weapons[currentWeapon].capitalize())
 
 func _process(delta):
 	if Input.is_action_just_released("changeUp"):

@@ -28,18 +28,18 @@ script = ExtResource( 4 )
 z_index = 100
 
 [node name="uiBackground1" type="ColorRect" parent="uiContainer"]
-margin_left = 319.521
-margin_top = 10.2438
-margin_right = 686.521
-margin_bottom = 64.2438
+margin_left = 250.0
+margin_top = 10.0
+margin_right = 783.0
+margin_bottom = 64.0
 color = Color( 0.211765, 0.211765, 0.211765, 1 )
 
 [node name="moneyDisplay" type="Label" parent="uiContainer/uiBackground1"]
 anchor_left = 0.5
 anchor_right = 0.5
-margin_left = 60.323
+margin_left = -20.507
 margin_top = 9.0
-margin_right = 107.323
+margin_right = 26.493
 margin_bottom = 40.0
 text = "Money:
 0"
@@ -54,11 +54,29 @@ margin_bottom = 38.5403
 value = 100.0
 
 [node name="keyDisplay" type="Label" parent="uiContainer/uiBackground1"]
-margin_left = 302.219
+margin_left = 302.969
 margin_top = 9.0
-margin_right = 347.219
+margin_right = 347.969
 margin_bottom = 40.0
 text = "Keys:
 0"
 align = 1
 valign = 1
+
+[node name="arrowDisplay" type="Label" parent="uiContainer/uiBackground1"]
+margin_left = 354.865
+margin_top = 9.0
+margin_right = 402.865
+margin_bottom = 40.0
+text = "Arrows:
+3"
+align = 1
+
+[node name="weaponDisplay" type="Label" parent="uiContainer/uiBackground1"]
+margin_left = 413.48
+margin_top = 9.0
+margin_right = 520.48
+margin_bottom = 40.0
+text = "Current Weapon:
+Sword"
+align = 1
