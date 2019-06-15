@@ -19,6 +19,7 @@ var keyDisplay
 var isDead = false
 #var deathAnimationFrame = 0
 var attackSpeed = 1
+var weapons = []
 
 func _ready():
 #	sprite = spriteScene.instance()
@@ -105,10 +106,13 @@ func attack():
 	add_child(attackTimer)
 	attackTimer.start(attackSpeed)
 	sprite.set_texture(load("res://sprites/attackingSwordSprite.tres"))
-	if get_parent().monsters.has(coordinates):
+	var monsterCoords = []
+	for monster in get_parent().monsters:
+		monsterCoords.append(monster.coordinates)
+	if monsterCoords.has(coordinates):
 		get_parent().hitMonster(coordinates,float(totalDamage)/2)
 		print("dealt "+str(float(totalDamage)/2)+" damage to monster at " +str(coordinates))
-	if get_parent().monsters.has(coordinates+facing):
+	if monsterCoords.has(coordinates+facing):
 		get_parent().hitMonster(coordinates+facing,totalDamage)
 		print("dealt "+str(totalDamage)+" damage to monster at " +str(coordinates))
 

@@ -12,19 +12,23 @@ var playerCoordinates
 var sprite
 var attackTimer
 var healthBar
+var moveTimer
+var levelMap
+var monsterID
 
 func _ready():
 	sprite = spriteScene.instance()
 	sprite.set_position((coordinates-playerCoordinates)*Vector2(16,16))
 	get_node("../graphicsContainer/spriteContainer").add_child(sprite)
 	healthBar = monsterHealthBar.new(coordinates,maxHealth, health, name)
-	healthBar.set_position((coordinates-playerCoordinates)*Vector2(16,16)+Vector2(-15,16))
+	healthBar.set_position((coordinates-playerCoordinates)*Vector2(16,16)+Vector2(-10,16))
 	get_node("../graphicsContainer/spriteContainer").add_child(healthBar)
 	
 
 
 func _init(c,f,pc,id):
 	name = "blueSlime"+str(id)
+	monsterID = id
 	coordinates = c
 	facing = f
 	playerCoordinates = pc
@@ -32,6 +36,24 @@ func _init(c,f,pc,id):
 	add_child(attackTimer)
 	attackTimer.connect("timeout",self,"attack")
 	attackTimer.start(.5)
+	moveTimer = Timer.new()
+	add_child(moveTimer)
+	moveTimer.connect("timeout",self,"attemptMove")
+	moveTimer.start(1)
+
+func getMap(map):
+	self.levelMap = map
+
+func attemptMove():
+	var attemptedCoordinates = coordinates + facing
+	if levelMap[attemptedCoordinates] == "wall":
+		facing *= Vector2(-1,-1)
+		move(facing)
+	elif levelMap[attemptedCoordinates] == "door":
+		facing *= Vector2(-1,-1)
+		move(facing)
+	else:
+		move(facing)
 
 func updatePlayerPos(vec):
 	playerCoordinates += vec
@@ -49,20 +71,15 @@ func die():
 	sprite.queue_free()
 	get_node("../graphicsContainer/spriteContainer").remove_child(healthBar)
 	healthBar.queue_free()
-	get_parent().killMonster(coordinates)
+	get_parent().killMonster(self)
 	get_parent().remove_child(self)
 
 func move(vec):
 	coordinates += vec
-	match vec:
-		Vector2(1,0):
-			facing = "right"
-		Vector2(0,1):
-			facing = "down"
-		Vector2(0,-1):
-			facing = "up"
-		Vector2(-1,0):
-			facing = "left"
+	#facing = vec
+	sprite.move(vec)
+	healthBar.move(vec)
+	attack()
 
 func attack():
 	if playerCoordinates == coordinates:

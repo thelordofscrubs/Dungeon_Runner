@@ -6,7 +6,7 @@ var levelTileMap
 var levelDimensions
 var levelGrid = {}
 var doors = {}
-var monsters = {}
+var monsters = []
 var chests = {}
 var keys = {}
 var pots = {}
@@ -74,7 +74,7 @@ func _ready():
 					levelTileMap.set_cellv(cc,0)
 				7: #blueSlimeSpawn
 					levelGrid[cc] = "floor"
-					var facing = "up"
+					var facing = Vector2(0,-1)
 					spawnMonster("blueSlime",cc,initPlayerCoords,facing)
 					levelTileMap.set_cellv(cc,0)
 				8: #keySpawn
@@ -87,8 +87,13 @@ func _ready():
 					levelTileMap.set_cellv(cc,0)
 				10: #batSkeletonSpawn
 					levelGrid[cc] = "floor"
-					var facing = "up"
+					var facing = Vector2(0,-1)
 					spawnMonster("batSkeleton",cc,initPlayerCoords,facing)
+					levelTileMap.set_cellv(cc,0)
+				12:
+					levelGrid[cc] = "floor"
+					var facing = Vector2(1,0)
+					spawnMonster("blueSlime",cc,initPlayerCoords,facing)
 					levelTileMap.set_cellv(cc,0)
 	print("initial player coordinates are: "+str(initPlayerCoords[0])+", "+str(initPlayerCoords[1]))
 	levelTileMap.set_position(levelTileMap.get_position()-initPlayerCoords*Vector2(16,16))
@@ -99,17 +104,19 @@ func _ready():
 	graphicsContainerNode.add_child(levelTileMap)
 	#get_node("healthBar").set_position()
 	graphicsContainerNode.set_position(OS.get_window_size()/Vector2(2,2)-Vector2(8,8))
+	for monster in monsters:
+		monster.getMap(levelGrid)
  
 func spawnMonster(type,coordinates,playerCoords,facing):
 	match type:
 		"blueSlime":
-			monsters[coordinates] = blueSlime.new(coordinates, facing, playerCoords,monsters.size())
-			add_child(monsters[coordinates])
+			monsters.append(blueSlime.new(coordinates, facing, playerCoords,monsters.size()))
+			add_child(monsters.back())
 		"batSkeleton":
 			pass
 
-func killMonster(monsterKey):
-	monsters.erase(monsterKey)
+func killMonster(monster):
+	monsters.erase(monster)
 
 func spawnKey(coordinates):
 	keys[coordinates] = true
@@ -135,17 +142,7 @@ func openChest(chestKey):
 func die():
 	isDead = true
 
-func attemptMove(directionStr):
-	var direction
-	match directionStr:
-		"up":
-			direction = Vector2(0,-1)
-		"down":
-			direction = Vector2(0,1)
-		"left":
-			direction = Vector2(-1,0)
-		"right":
-			direction = Vector2(1,0)
+func attemptMove(direction):
 	var attTilePos = currentPlayerCoordinates + direction
 	var attTile = levelGrid[attTilePos]
 	match attTile:
@@ -189,25 +186,27 @@ func move(direction):
 	graphicsContainerNode.set_position(graphicsContainerNode.get_position()-direction*pixelMult)
 	playerNode.move(direction)
 	currentPlayerCoordinates += direction
-	for monsterCoords in monsters.keys():
-		if monsterCoords == currentPlayerCoordinates:
-			playerNode.takeDamage(monsters[monsterCoords].damage)
-	for monster in monsters.values():
+	for monster in monsters:
+		if monster.coordinates == currentPlayerCoordinates:
+			playerNode.takeDamage(monster.damage)
 		monster.updatePlayerPos(direction)
 
-func hitMonster(monsterKey,damage):
-	monsters[monsterKey].changeHealth(float((-1)*damage))
+func hitMonster(monsterCoords,damage):
+	for monster in monsters:
+		if monster.coordinates == monsterCoords:
+			monster.changeHealth(-damage)
+	#monsters[monsterKey].changeHealth(float((-1)*damage))
 
 func _process(delta):
 	if isDead == false:
 		if Input.is_action_just_released("left"):
-			attemptMove("left")
+			attemptMove(Vector2(-1,0))
 		if Input.is_action_just_released("up"):
-			attemptMove("up")
+			attemptMove(Vector2(0,-1))
 		if Input.is_action_just_released("right"):
-			attemptMove("right")
+			attemptMove(Vector2(1,0))
 		if Input.is_action_just_released("down"):
-			attemptMove("down")
+			attemptMove(Vector2(0,1))
 		if Input.is_action_just_released("attack"):
 			playerNode.attack()
 		if Input.is_action_just_released("use"):

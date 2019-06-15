@@ -9,7 +9,7 @@ func _init(iCoords, maxV, cv, mname):
 	self.value = cv
 	self.coords = iCoords * Vector2(16,16)
 	self.rect_size = Vector2(217,27)
-	self.rect_scale = Vector2(.2,.1)
+	self.rect_scale = Vector2(.15,.07)
 	self.rect_position = Vector2(self.coords[0]-(rect_size[0]*rect_scale[0]-32)/2,self.coords[1]+32)
 	#var centerPixel = self.coords
 	var centerOfScreen = OS.window_size/Vector2(2,2)
