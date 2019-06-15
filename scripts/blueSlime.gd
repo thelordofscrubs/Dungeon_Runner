@@ -42,18 +42,18 @@ func _init(c,f,pc,id):
 	moveTimer.start(1)
 
 func getMap(map):
-	self.levelMap = map
+	levelMap = map
 
 func attemptMove():
 	var attemptedCoordinates = coordinates + facing
 	if levelMap[attemptedCoordinates] == "wall":
 		facing *= Vector2(-1,-1)
-		move(facing)
+		move(facing, 1)
 	elif levelMap[attemptedCoordinates] == "door":
 		facing *= Vector2(-1,-1)
-		move(facing)
+		move(facing, 1)
 	else:
-		move(facing)
+		move(facing, 1)
 
 func updatePlayerPos(vec):
 	playerCoordinates += vec
@@ -74,11 +74,11 @@ func die():
 	get_parent().killMonster(self)
 	get_parent().remove_child(self)
 
-func move(vec):
+func move(vec,time = 1):
 	coordinates += vec
 	#facing = vec
 	sprite.move(vec)
-	healthBar.move(vec)
+	healthBar.move(vec, 1)
 	attack()
 
 func attack():
