@@ -195,6 +195,7 @@ func hitMonster(monsterCoords,damage):
 	for monster in monsters:
 		if monster.coordinates == monsterCoords:
 			monster.changeHealth(-damage)
+			return 1
 	#monsters[monsterKey].changeHealth(float((-1)*damage))
 
 func _process(delta):

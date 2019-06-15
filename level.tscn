@@ -25,7 +25,7 @@ texture = ExtResource( 3 )
 script = ExtResource( 4 )
 
 [node name="uiContainer" type="Node2D" parent="."]
-z_index = 10
+z_index = 100
 
 [node name="uiBackground1" type="ColorRect" parent="uiContainer"]
 margin_left = 319.521

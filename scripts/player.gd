@@ -8,6 +8,7 @@ var atkS = 5
 var atkM
 var totalDamage
 var coordinates
+var initialCoordinates
 var isAttacking = false
 var sprite
 var facing = Vector2(0,1)
@@ -19,7 +20,9 @@ var keyDisplay
 var isDead = false
 #var deathAnimationFrame = 0
 var attackSpeed = 1
-var weapons = []
+var weapons = ["sword","bow"]
+var currentWeapon = 0
+var arrows = 3
 
 func _ready():
 #	sprite = spriteScene.instance()
@@ -33,6 +36,7 @@ func _ready():
 func _init(spawnCoordinates, h = 100, aM = 1):
 	name = "Player"
 	coordinates = spawnCoordinates
+	initialCoordinates = spawnCoordinates
 	health = h
 	atkM = aM
 	totalDamage = atkS * atkM
@@ -97,25 +101,44 @@ func changeKeys(a):
 	keyDisplay.set_text("Keys:\n"+str(keys))
 
 func attack():
-	if isAttacking == true:
-		return
-	isAttacking = true
-	var attackTimer = Timer.new()
-	attackTimer.set_one_shot(true)
-	attackTimer.connect("timeout",self,"attackTimerTimeOut")
-	add_child(attackTimer)
-	attackTimer.start(attackSpeed)
-	sprite.set_texture(load("res://sprites/attackingSwordSprite.tres"))
-	var monsterCoords = []
-	for monster in get_parent().monsters:
-		monsterCoords.append(monster.coordinates)
-	if monsterCoords.has(coordinates):
-		get_parent().hitMonster(coordinates,float(totalDamage)/2)
-		print("dealt "+str(float(totalDamage)/2)+" damage to monster at " +str(coordinates))
-	if monsterCoords.has(coordinates+facing):
-		get_parent().hitMonster(coordinates+facing,totalDamage)
-		print("dealt "+str(totalDamage)+" damage to monster at " +str(coordinates))
+	match weapons[currentWeapon]:
+		"sword":
+			if isAttacking == true:
+				return
+			isAttacking = true
+			var attackTimer = Timer.new()
+			attackTimer.set_one_shot(true)
+			attackTimer.connect("timeout",self,"attackTimerTimeOut")
+			add_child(attackTimer)
+			attackTimer.start(attackSpeed)
+			sprite.set_texture(load("res://sprites/attackingSwordSprite.tres"))
+			var monsterCoords = []
+			for monster in get_parent().monsters:
+				monsterCoords.append(monster.coordinates)
+			if monsterCoords.has(coordinates):
+				var hit = get_parent().hitMonster(coordinates,float(totalDamage)/2)
+				print("dealt "+str(float(totalDamage)/2)+" damage to monster at " +str(coordinates))
+				return
+			if monsterCoords.has(coordinates+facing):
+				var hit = get_parent().hitMonster(coordinates+facing,totalDamage)
+				print("dealt "+str(totalDamage)+" damage to monster at " +str(coordinates))
+		"bow":
+			if isAttacking == true:
+				return
+			isAttacking = true
+			var attackTimer = Timer.new()
+			attackTimer.set_one_shot(true)
+			attackTimer.connect("timeout",self,"attackTimerTimeOut")
+			add_child(attackTimer)
+			attackTimer.start(2)
+			sprite.set_texture(load("res://sprites/attackingBowSprite.png"))
+			if arrows > 0:
+				fireArrow(coordinates,facing)
+				arrows -= 1
 
+func fireArrow(coords, direction):
+	var arrow = Arrow.new(coords, direction, initialCoordinates)
+	get_node("../graphicsContainer").add_child(arrow)
 
 func attackTimerTimeOut():
 	isAttacking = false
@@ -124,3 +147,16 @@ func attackTimerTimeOut():
 func move(vec):
 	coordinates += vec
 	facing = vec
+
+func changeWeapon(d):
+	currentWeapon += d
+	if currentWeapon == -1:
+		currentWeapon = weapons.size()-1
+	if currentWeapon == weapons.size():
+		currentWeapon = 0
+
+func _process(delta):
+	if Input.is_action_just_released("changeUp"):
+		changeWeapon(1)
+	if Input.is_action_just_released("changeDown"):
+		changeWeapon(-1)

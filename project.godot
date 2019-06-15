@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Sprite",
+"class": "Arrow",
+"language": "GDScript",
+"path": "res://scripts/arrow.gd"
+}, {
 "base": "Node2D",
 "class": "Dungeon",
 "language": "GDScript",
@@ -30,6 +35,7 @@ _global_script_classes=[ {
 "path": "res://scripts/monsterHealthBar.gd"
 } ]
 _global_script_class_icons={
+"Arrow": "",
 "Dungeon": "",
 "Player": "",
 "blueSlime": "",
@@ -80,11 +86,13 @@ use={
 }
 changeUp={
 "deadzone": 0.5,
-"events": [  ]
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":67,"unicode":0,"echo":false,"script":null)
+ ]
 }
 changeDown={
 "deadzone": 0.5,
-"events": [  ]
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":86,"unicode":0,"echo":false,"script":null)
+ ]
 }
 pauseMenu={
 "deadzone": 0.5,
