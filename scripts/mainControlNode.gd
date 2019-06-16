@@ -25,6 +25,7 @@ func setIsPaused(b):
 
 func startLevel(levelToStart):
 	get_tree().set_pause(false)
+	print("level id:"+str(levelToStart))
 	currentLevel = load("res://level.tscn")
 	currentLevel = currentLevel.instance(levelToStart)
 	menuContainer.get_node("mainMenu").set_visible(false)

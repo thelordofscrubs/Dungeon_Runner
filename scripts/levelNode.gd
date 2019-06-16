@@ -19,15 +19,13 @@ var playerNode
 #var levelNode
 var isDead = false
 
-func _init(id = 1):
-	levelID = id
+func _init(id):
+	print("id:"+str(id))
+	levelID = int(id)
 	name = "level"+str(levelID)
 	set_pause_mode(1)
-
-func _ready():
-	graphicsContainerNode = get_node("graphicsContainer")
-	spriteContainerNode = graphicsContainerNode.get_node("spriteContainer")
 	var levelName = "res://maps/map"+str(levelID)+"TileMap.tscn"
+	print(levelName)
 	levelTileMap = load(levelName).instance()
 	var x
 	var y
@@ -49,6 +47,11 @@ func _ready():
 			if levelTileMap.get_cell(x,y) == 6:
 				initPlayerCoords = Vector2(x,y)#need player coordinates for spawning sprites in correct locations
 				currentPlayerCoordinates = initPlayerCoords
+
+func _ready():
+	graphicsContainerNode = get_node("graphicsContainer")
+	spriteContainerNode = graphicsContainerNode.get_node("spriteContainer")
+	
 	for y in range(levelDimensions[1]):
 		for x in range(levelDimensions[0]):
 			var cc = Vector2(x,y)
@@ -113,7 +116,7 @@ func spawnMonster(type,coordinates,playerCoords,facing):
 			monsters.append(blueSlime.new(coordinates, facing, playerCoords,monsters.size()))
 			add_child(monsters.back())
 		"batSkeleton":
-			monsters.append(batSkeleton.new(coordinates, facing, playerCoords,monsters.size()))
+			monsters.append(load("res://scripts/batSkeleton.gd").new(coordinates, facing, playerCoords,monsters.size()))
 			add_child(monsters.back())
 
 func killMonster(monster):
