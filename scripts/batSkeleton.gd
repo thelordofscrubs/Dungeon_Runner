@@ -1,11 +1,11 @@
 extends Node
-class_name blueSlime
+class_name batSkeleton
 
-var spriteScene = preload("res://sprites/blueSlimeSprite.tscn")
+var spriteScene = preload("res://sprites/batSkeletonSprite.tscn")
 
-var health = 10.0
-var maxHealth = 10
-var damage = 5
+var health = 20.0
+var maxHealth = 20
+var damage = 10
 var coordinates
 var facing
 var playerCoordinates
@@ -15,20 +15,22 @@ var healthBar
 var moveTimer
 var levelMap
 var monsterID
-var flying = false
+var flying = true
 
 func _ready():
+#	sprite = Sprite.new()
+#	sprite.set_centered(false)
+#	sprite.set_texture(spriteScene)
+#	sprite.set_position((coordinates-playerCoordinates)*Vector2(16,16))
 	sprite = spriteScene.instance()
 	sprite.set_position((coordinates-playerCoordinates)*Vector2(16,16))
 	get_node("../graphicsContainer/spriteContainer").add_child(sprite)
 	healthBar = monsterHealthBar.new(coordinates,maxHealth, health, name)
 	healthBar.set_position((coordinates-playerCoordinates)*Vector2(16,16)+Vector2(-10,16))
 	get_node("../graphicsContainer/spriteContainer").add_child(healthBar)
-	
-
 
 func _init(c,f,pc,id):
-	name = "blueSlime"+str(id)
+	name = "batSkeleton"+str(id)
 	monsterID = id
 	coordinates = c
 	facing = f
@@ -54,7 +56,19 @@ func attemptMove():
 		facing *= Vector2(-1,-1)
 		move(facing, 1)
 	else:
-		move(facing, 1)
+		match facing:
+			Vector2(1,0):
+				move(facing, 1)
+				facing = Vector2(0,1)
+			Vector2(0,1):
+				move(facing, 1)
+				facing = Vector2(-1,0)
+			Vector2(-1,0):
+				move(facing, 1)
+				facing = Vector2(0,-1)
+			Vector2(0,-1):
+				move(facing, 1)
+				facing = Vector2(1,0)
 
 func updatePlayerPos(vec):
 	playerCoordinates += vec

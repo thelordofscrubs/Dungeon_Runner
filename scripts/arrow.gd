@@ -71,6 +71,6 @@ func movePixel():
 				get_parent().remove_child(self)
 				queue_free()
 				return
-	if get_node("../..").hitMonster(coordinates,10) == 1:
+	if get_node("../..").hitMonster(coordinates,10,"arrow") == 1:
 			get_parent().remove_child(self)
 			queue_free()

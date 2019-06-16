@@ -120,11 +120,11 @@ func attack():
 			for monster in get_parent().monsters:
 				monsterCoords.append(monster.coordinates)
 			if monsterCoords.has(coordinates):
-				var hit = get_parent().hitMonster(coordinates,float(totalDamage)/2)
+				var hit = get_parent().hitMonster(coordinates,float(totalDamage)/2,"melee")
 				print("dealt "+str(float(totalDamage)/2)+" damage to monster at " +str(coordinates))
 				return
 			if monsterCoords.has(coordinates+facing):
-				var hit = get_parent().hitMonster(coordinates+facing,totalDamage)
+				var hit = get_parent().hitMonster(coordinates+facing,totalDamage,"melee")
 				print("dealt "+str(totalDamage)+" damage to monster at " +str(coordinates))
 		"bow":
 			if isAttacking == true:

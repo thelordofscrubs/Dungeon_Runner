@@ -19,7 +19,7 @@ var playerNode
 #var levelNode
 var isDead = false
 
-func _init(id = 0):
+func _init(id = 1):
 	levelID = id
 	name = "level"+str(levelID)
 	set_pause_mode(1)
@@ -113,7 +113,8 @@ func spawnMonster(type,coordinates,playerCoords,facing):
 			monsters.append(blueSlime.new(coordinates, facing, playerCoords,monsters.size()))
 			add_child(monsters.back())
 		"batSkeleton":
-			pass
+			monsters.append(batSkeleton.new(coordinates, facing, playerCoords,monsters.size()))
+			add_child(monsters.back())
 
 func killMonster(monster):
 	monsters.erase(monster)
@@ -194,9 +195,13 @@ func move(direction):
 			playerNode.takeDamage(monster.damage)
 		monster.updatePlayerPos(direction)
 
-func hitMonster(monsterCoords,damage):
+func hitMonster(monsterCoords,damage,type):
 	for monster in monsters:
 		if monster.coordinates == monsterCoords:
+			var randPerc = randi()%101
+			if type == "melee":print("rolled: "+str(randPerc)+" to dodge sword attack, needs to be more than 60")
+			if monster.flying == true&&type == "melee"&&randPerc<40:
+				return 0
 			monster.changeHealth(-damage)
 			return 1
 	#monsters[monsterKey].changeHealth(float((-1)*damage))
