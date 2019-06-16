@@ -19,7 +19,7 @@ var playerNode
 #var levelNode
 var isDead = false
 
-func _init(id):
+func startLevel(id):
 	print("id:"+str(id))
 	levelID = int(id)
 	name = "level"+str(levelID)
@@ -47,11 +47,6 @@ func _init(id):
 			if levelTileMap.get_cell(x,y) == 6:
 				initPlayerCoords = Vector2(x,y)#need player coordinates for spawning sprites in correct locations
 				currentPlayerCoordinates = initPlayerCoords
-
-func _ready():
-	graphicsContainerNode = get_node("graphicsContainer")
-	spriteContainerNode = graphicsContainerNode.get_node("spriteContainer")
-	
 	for y in range(levelDimensions[1]):
 		for x in range(levelDimensions[0]):
 			var cc = Vector2(x,y)
@@ -144,7 +139,10 @@ func openChest(chestKey):
 			playerNode.changeArrows(2)
 	chests.erase(chestKey)
 	levelTileMap.set_cellv(chestKey,5)
-	
+
+func _ready():
+	graphicsContainerNode = get_node("graphicsContainer")
+	spriteContainerNode = graphicsContainerNode.get_node("spriteContainer")
 
 func die():
 	isDead = true

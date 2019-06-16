@@ -27,9 +27,10 @@ func startLevel(levelToStart):
 	get_tree().set_pause(false)
 	print("level id:"+str(levelToStart))
 	currentLevel = load("res://level.tscn")
-	currentLevel = currentLevel.instance(levelToStart)
-	menuContainer.get_node("mainMenu").set_visible(false)
+	currentLevel = currentLevel.instance()
+	mainMenu.set_visible(false)
 	add_child(currentLevel)
+	currentLevel.startLevel(levelToStart)
 	levelActive = true
 	levelID = levelToStart
 
