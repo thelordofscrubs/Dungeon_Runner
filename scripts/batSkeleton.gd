@@ -74,6 +74,9 @@ func updatePlayerPos(vec):
 	playerCoordinates += vec
 
 func changeHealth(a):
+	sprite.takeDamage(a)
+	if typeof(a) == TYPE_STRING:
+		return
 	health += a
 	if health > maxHealth:
 		health = maxHealth

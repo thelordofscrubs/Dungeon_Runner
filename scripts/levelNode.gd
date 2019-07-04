@@ -168,6 +168,9 @@ func attemptMove(direction):
 					doors[attTilePos] = true
 					move(direction)
 					levelTileMap.set_cellv(attTilePos, 11)
+					levelGrid[attTilePos] = "openDoor"
+		"openDoor":
+			move(direction)
 		"key":
 			keys.erase(attTilePos)
 			playerNode.changeKeys(1)
@@ -199,9 +202,10 @@ func move(direction):
 func hitMonster(monsterCoords,damage,type):
 	for monster in monsters:
 		if monster.coordinates == monsterCoords:
-			var randPerc = randi()%101
-			if type == "melee":print("rolled: "+str(randPerc)+" to dodge sword attack, needs to be more than 60")
-			if monster.flying == true&&type == "melee"&&randPerc<40:
+			#var randPerc = randi()%101
+			#if type == "melee":print("rolled: "+str(randPerc)+" to dodge sword attack, needs to be more than 60")
+			if monster.flying == true&&type == "melee"&&randi()%101<30:
+				monster.changeHealth("*Dodged*")
 				return 0
 			monster.changeHealth(-damage)
 			return 1
@@ -220,4 +224,4 @@ func _process(delta):
 		if Input.is_action_just_released("attack"):
 			playerNode.attack()
 		if Input.is_action_just_released("use"):
-			pass
+			playerNode.castSpell()

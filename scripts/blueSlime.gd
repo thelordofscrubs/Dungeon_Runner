@@ -24,7 +24,6 @@ func _ready():
 	healthBar = monsterHealthBar.new(coordinates,maxHealth, health, name)
 	healthBar.set_position((coordinates-playerCoordinates)*Vector2(16,16)+Vector2(-10,16))
 	get_node("../graphicsContainer/spriteContainer").add_child(healthBar)
-	
 
 
 func _init(c,f,pc,id):
@@ -60,6 +59,9 @@ func updatePlayerPos(vec):
 	playerCoordinates += vec
 
 func changeHealth(a):
+	sprite.takeDamage(a)
+	if typeof(a) == TYPE_STRING:
+		return
 	health += a
 	if health > maxHealth:
 		health = maxHealth

@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scripts/levelNode.gd" type="Script" id=1]
 [ext_resource path="res://scripts/graphicsContainer.gd" type="Script" id=2]
 [ext_resource path="res://otherArt/blackPixel.png" type="Texture" id=3]
 [ext_resource path="res://scripts/sceneBackground.gd" type="Script" id=4]
 [ext_resource path="res://healthBar.tscn" type="PackedScene" id=5]
+[ext_resource path="res://manaBar.tscn" type="PackedScene" id=6]
 
 [node name="level" type="Node2D"]
 pause_mode = 1
@@ -28,55 +29,76 @@ script = ExtResource( 4 )
 z_index = 100
 
 [node name="uiBackground1" type="ColorRect" parent="uiContainer"]
-margin_left = 250.0
+margin_left = 247.0
 margin_top = 10.0
-margin_right = 783.0
-margin_bottom = 64.0
+margin_right = 693.0
+margin_bottom = 145.0
 color = Color( 0.211765, 0.211765, 0.211765, 1 )
 
 [node name="moneyDisplay" type="Label" parent="uiContainer/uiBackground1"]
-anchor_left = 0.5
-anchor_right = 0.5
-margin_left = -20.507
-margin_top = 9.0
-margin_right = 26.493
-margin_bottom = 40.0
+margin_left = 246.111
+margin_top = 9.63024
+margin_right = 293.111
+margin_bottom = 40.6302
 text = "Money:
 0"
 align = 1
 valign = 1
 
 [node name="healthBar" parent="uiContainer/uiBackground1" instance=ExtResource( 5 )]
-margin_left = 13.506
-margin_top = 11.5403
-margin_right = 230.506
-margin_bottom = 38.5403
+margin_left = 13.0
+margin_top = 11.54
+margin_right = 230.0
+margin_bottom = 38.54
 value = 100.0
 
 [node name="keyDisplay" type="Label" parent="uiContainer/uiBackground1"]
-margin_left = 302.969
-margin_top = 9.0
-margin_right = 347.969
-margin_bottom = 40.0
+margin_left = 306.12
+margin_top = 10.2605
+margin_right = 351.12
+margin_bottom = 41.2605
 text = "Keys:
 0"
 align = 1
 valign = 1
 
 [node name="arrowDisplay" type="Label" parent="uiContainer/uiBackground1"]
-margin_left = 354.865
-margin_top = 9.0
-margin_right = 402.865
-margin_bottom = 40.0
+margin_left = 363.058
+margin_top = 11.521
+margin_right = 411.058
+margin_bottom = 42.521
 text = "Arrows:
 3"
 align = 1
 
 [node name="weaponDisplay" type="Label" parent="uiContainer/uiBackground1"]
-margin_left = 413.48
-margin_top = 9.0
-margin_right = 520.48
-margin_bottom = 40.0
+margin_left = 235.119
+margin_top = 48.0755
+margin_right = 342.119
+margin_bottom = 79.0755
 text = "Current Weapon:
 Sword"
 align = 1
+
+[node name="buffDisplay" type="Label" parent="uiContainer/uiBackground1"]
+margin_left = 26.0
+margin_top = 88.0
+margin_right = 419.0
+margin_bottom = 119.0
+text = "Currently Active Buffs:"
+
+[node name="spellDisplay" type="Label" parent="uiContainer/uiBackground1"]
+margin_left = 337.85
+margin_top = 47.4452
+margin_right = 444.85
+margin_bottom = 78.4453
+text = "Current Spell:
+Firebolt"
+align = 1
+
+[node name="manaBar" parent="uiContainer/uiBackground1" instance=ExtResource( 6 )]
+margin_left = 13.0
+margin_top = 48.0
+margin_right = 230.0
+margin_bottom = 75.0
+value = 100.0

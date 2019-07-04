@@ -4,6 +4,7 @@ class_name Player
 var spriteScene = preload("res://sprites/charSprite.tscn")
 
 var health
+var mana = 100
 var atkS = 5
 var atkM
 var totalDamage
@@ -15,6 +16,7 @@ var facing = Vector2(0,1)
 var keys = 0
 var money = 0
 var healthBar
+var manaBar
 var moneyDisplay
 var keyDisplay
 var arrowDisplay
@@ -24,7 +26,13 @@ var isDead = false
 var attackSpeed = 1
 var weapons = ["sword","bow"]
 var currentWeapon = 0
-var arrows = 3
+var arrows = 0
+var spells = ["firebolt","speed buff"]
+var currentSpell = 0
+var manaRegenTimer
+var spellDisplay
+var buffDisplay
+var currentBuffs = []
 
 func _ready():
 #	sprite = spriteScene.instance()
@@ -32,10 +40,18 @@ func _ready():
 #	get_parent().add_child(sprite)
 #	print("charSprite should have been generated")
 	healthBar = get_node("../uiContainer/uiBackground1/healthBar")
+	manaBar = get_node("../uiContainer/uiBackground1/manaBar")
 	moneyDisplay = get_node("../uiContainer/uiBackground1/moneyDisplay")
 	keyDisplay = get_node("../uiContainer/uiBackground1/keyDisplay")
 	arrowDisplay = get_node("../uiContainer/uiBackground1/arrowDisplay")
+	arrowDisplay.set_text("Arrows:\n"+str(arrows))
 	weaponDisplay = get_node("../uiContainer/uiBackground1/weaponDisplay")
+	spellDisplay = get_node("../uiContainer/uiBackground1/spellDisplay")
+	buffDisplay = get_node("../uiContainer/uiBackground1/buffDisplay")
+	manaRegenTimer = Timer.new()
+	manaRegenTimer.connect("timeout", self, "regenMana")
+	add_child(manaRegenTimer)
+	manaRegenTimer.start(2)
 
 func _init(spawnCoordinates, h = 100, aM = 1):
 	name = "Player"
@@ -45,12 +61,48 @@ func _init(spawnCoordinates, h = 100, aM = 1):
 	atkM = aM
 	totalDamage = atkS * atkM
 
+func removeBuff(buffName):
+	currentBuffs.erase(buffName)
+	if currentBuffs.has(buffName):
+		return
+	var buffText = buffDisplay.text
+	match buffName:
+		"atkSpeedUp":
+			var loc = buffText.find(" Attack Speed Up")
+			buffText.erase(loc, 17)
+			if currentBuffs.size() > 1:
+				buffText.erase(1,loc)
+	if currentBuffs.size() == 1:
+		buffText.erase(1,buffText.find(","))
+	#buffText = "Currently Active Buffs:" + buffText
+	buffDisplay.set_text(buffText)
+
+func addBuff(buffName):
+	if currentBuffs.has(buffName):
+		currentBuffs.append(buffName)
+		return
+	currentBuffs.append(buffName)
+	var buffText = buffDisplay.text
+	match buffName:
+		"atkSpeedUp":
+			if currentBuffs.size() > 1:
+				buffText += ","
+			buffText += " Attack Speed Up"
+	buffDisplay.set_text(buffText)
+
 func genSprite():
 	sprite = spriteScene.instance()
 	sprite.set_z_index(5)
 	sprite.set_scale(Vector2(2,2))
 	get_parent().add_child(sprite)
 	print("charSprite should have been generated")
+
+func regenMana():
+	mana += 2
+	manaBar.value = mana
+
+func unlockSpell(spellName):
+	spells.append(spellName)
 
 func changeMoney(a):
 	money += a
@@ -104,17 +156,24 @@ func changeKeys(a):
 	keys += a
 	keyDisplay.set_text("Keys:\n"+str(keys))
 
+func attackTimer(t):
+	if isAttacking == true:
+		return false
+	isAttacking = true
+	var timer = Timer.new()
+	timer.set_one_shot(true)
+	add_child(timer)
+	timer.connect("timeout", self, "attackTimerTimeOut")
+	var time = float(t)/attackSpeed
+	#print("Starting attack timer with "+String(time)+" seconds")
+	timer.start(time)
+	return true
+
 func attack():
 	match weapons[currentWeapon]:
 		"sword":
-			if isAttacking == true:
+			if attackTimer(1) == false:
 				return
-			isAttacking = true
-			var attackTimer = Timer.new()
-			attackTimer.set_one_shot(true)
-			attackTimer.connect("timeout",self,"attackTimerTimeOut")
-			add_child(attackTimer)
-			attackTimer.start(attackSpeed)
 			sprite.set_texture(load("res://sprites/attackingSwordSprite.tres"))
 			var monsterCoords = []
 			for monster in get_parent().monsters:
@@ -127,14 +186,8 @@ func attack():
 				var hit = get_parent().hitMonster(coordinates+facing,totalDamage,"melee")
 				print("dealt "+str(totalDamage)+" damage to monster at " +str(coordinates))
 		"bow":
-			if isAttacking == true:
+			if attackTimer(2) == false:
 				return
-			isAttacking = true
-			var attackTimer = Timer.new()
-			attackTimer.set_one_shot(true)
-			attackTimer.connect("timeout",self,"attackTimerTimeOut")
-			add_child(attackTimer)
-			attackTimer.start(2)
 			sprite.set_texture(load("res://sprites/attackingBowSprite.png"))
 			if arrows > 0:
 				fireArrow(coordinates,facing)
@@ -156,6 +209,40 @@ func move(vec):
 	coordinates += vec
 	facing = vec
 
+func castSpell():
+	if isAttacking == true:
+		return
+	#sprite.set_texture(load("res://sprites/charSprite.png"))
+	if mana == 0:
+		return
+	var spell
+	match spells[currentSpell]:
+		"firebolt":
+			attackTimer(.5)
+			if mana < 20:
+				return
+			spell = fireBolt.new(coordinates, facing, initialCoordinates)
+			get_node("../graphicsContainer").add_child(spell)
+			mana -= 20
+			manaBar.value = mana
+		"speed buff":
+			attackTimer(1)
+			if mana < 50:
+				return
+			mana -= 50
+			attackSpeed *= 4
+			#print("attackSpeed is"+String(attackSpeed))
+			var timer = Timer.new()
+			timer.connect("timeout", self, "speedBuffTimeout")
+			timer.set_one_shot(true)
+			add_child(timer)
+			timer.start(10)
+			addBuff("atkSpeedUp")
+
+func speedBuffTimeout():
+	attackSpeed /= 4
+	removeBuff("atkSpeedUp")
+
 func changeWeapon(d):
 	currentWeapon += d
 	if currentWeapon == -1:
@@ -164,8 +251,20 @@ func changeWeapon(d):
 		currentWeapon = 0
 	weaponDisplay.set_text("Current Weapon:\n"+weapons[currentWeapon].capitalize())
 
+func changeSpell(d):
+	currentSpell += d
+	if currentSpell == -1:
+		currentSpell = spells.size()-1
+	if currentSpell == spells.size():
+		currentSpell = 0
+	spellDisplay.set_text("Current Spell:\n"+spells[currentSpell].capitalize())
+
 func _process(delta):
 	if Input.is_action_just_released("changeUp"):
 		changeWeapon(1)
 	if Input.is_action_just_released("changeDown"):
 		changeWeapon(-1)
+	if Input.is_action_just_released("changeUp1"):
+		changeSpell(1)
+	if Input.is_action_just_released("changeDown1"):
+		changeSpell(-1)

@@ -1,5 +1,5 @@
 extends Sprite
-class_name Arrow
+class_name fireBolt
 
 var coordinates
 var direction
@@ -26,7 +26,7 @@ func _init(coords, dir, initialPlayerCoords):
 	direction = dir
 	#pcoords = pixelCoordinates
 	centered = false
-	texture = load("res://sprites/arrowSprite.png")
+	texture = load("res://sprites/redSpellSprite.png")
 	scale = Vector2(1,1)
 	z_index = 50
 	match direction:
@@ -35,9 +35,9 @@ func _init(coords, dir, initialPlayerCoords):
 		Vector2(0,1):
 			flip_v = true
 		Vector2(1,0):
-			texture = load("res://sprites/arrowSpriteSide.png")
+			texture = load("res://sprites/redSpellSpriteSide.png")
 		Vector2(-1,0):
-			texture = load("res://sprites/arrowSpriteSide.png")
+			texture = load("res://sprites/redSpellSpriteSide.png")
 			flip_h = true
 	timer = Timer.new()
 	timer.connect("timeout",self,"movePixel1")
@@ -52,7 +52,7 @@ func movePixel1():
 		var timer1 = Timer.new()
 		timer1.connect("timeout",self,"movePixel")
 		add_child(timer1)
-		timer1.start(1.0/60)
+		timer1.start(1.0/30)
 		coordinates += direction
 
 
@@ -71,6 +71,8 @@ func movePixel():
 				get_parent().remove_child(self)
 				queue_free()
 				return
-	if get_node("../..").hitMonster(coordinates,10,"arrow") == 1:
+	if get_node("../..").hitMonster(coordinates,5,"fire") == 1:
 			get_parent().remove_child(self)
 			queue_free()
+
+
