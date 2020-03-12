@@ -208,6 +208,15 @@ func attackTimerTimeOut():
 func move(vec):
 	coordinates += vec
 	facing = vec
+	match facing:
+		Vector2(1,0):
+			sprite.set_texture(load("res://sprites/charSprite1.png"))
+		Vector2(0,1):
+			sprite.set_texture(load("res://sprites/charSprite0.png"))
+		Vector2(-1,0):
+			sprite.set_texture(load("res://sprites/charSprite3.png"))
+		Vector2(0,-1):
+			sprite.set_texture(load("res://sprites/charSprite2.png"))
 
 func castSpell():
 	if isAttacking == true:
