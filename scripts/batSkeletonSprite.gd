@@ -6,8 +6,6 @@ func move(vec):
 func takeDamage(a):
 	var dmgLabel = damageLabel.new()
 	dmgLabel.set_align(1)
-	if typeof(a) == TYPE_STRING:
-		dmgLabel.set_text(a)
 	dmgLabel.set_text(str(a))
 	var posX = dmgLabel.get_size()[0]/2-8
 	dmgLabel.set_position(position+Vector2(4,5))
